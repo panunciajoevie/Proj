@@ -5,6 +5,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 class Login extends StatefulWidget {
   static String tag = 'login';
   @override
@@ -13,7 +15,6 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
-
   var _pseudoController = new TextEditingController();
   var _passwordController = new TextEditingController();
   var data;
@@ -21,58 +22,41 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    Future<String> getLogin(String pseudo) async {
-      var response = await http.get(
-          Uri.encodeFull(
-              "https://petility.000webhostapp.com/Login.php?PSEUDO=${pseudo}"),
-          //"http://192.168.137.1/petility/Login.php?PSEUDO=${pseudo}"),
-          headers: {"Accept": "application/json"});
-
-      print(response.body);
-      setState(() {
-        var convertDataToJson = json.decode(response.body);
-        data = convertDataToJson['result'];
+    getLogin(
+      String pseudo,
+      String password,
+    ) async {
+      //    SharedPreferences sharedPreferences =
+      //       await SharedPreferences.getInstance();
+      var response = await http.post(Uri.encodeFull(
+          //  "https://petility.000webhostapp.com/Login.php?PSEUDO=${pseudo}"),
+          //laravel api
+          "http://192.168.0.25:8000/api/auth/login"), headers: {
+        "Accept": "application/json"
+      }, body: {
+        "username": _pseudoController.text,
+        "password": _passwordController.text,
       });
-    }
 
-    void onSignedInErrorPassword() {
-      var alert = new AlertDialog(
-        title: new Text("Error"),
-        content: new Text(
-            "There was an Password error signing in. Please try again."),
-      );
-      showDialog(context: context, child: alert);
-    }
-
-    void onSignedInErrorPseudo() {
-      var alert = new AlertDialog(
-        title: new Text("Error"),
-        content:
-            new Text("There was an Pseudo error signing in. Please try again."),
-      );
-      showDialog(context: context, child: alert);
-    }
-
-    VerifData(String pseudo, String password, var datadb) {
-      if (data[0]['username'] == pseudo) {
-        if (data[0]['password'] == password) {
-          // Navigator.of(context).pushNamed("/seconds");
-
-          var route = new MaterialPageRoute(
-            builder: (BuildContext context) => new LandingPage(
-              idUser: data[0]['user_id'],
-              fullname: data[0]['fullname'],
-              username: data[0]['username'],
-              completeaddress: data[0]['completeaddress'],
-              contactno: data[0]['contact'],
-            ),
-          );
-          Navigator.of(context).push(route);
-        } else {
-          onSignedInErrorPassword();
-        }
+      var status = response.body.contains('error');
+      var data = json.decode(response.body);
+      // print(data);
+      if (status) {
+        print(
+            'data: data["Error: Incorrect Username or Password. Please try again."]');
+        var alert = new AlertDialog(
+          title: new Text("Error"),
+          content:
+              new Text("Incorrect Username or Password. Please try again."),
+        );
+        showDialog(context: context, child: alert);
       } else {
-        onSignedInErrorPseudo();
+        print(data['user']);
+        print("Token: "+data['access_token']);
+        // _save(data['access_token']);
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return LandingPage();
+        }));
       }
     }
 
@@ -124,14 +108,7 @@ class _LoginState extends State<Login> {
             ),
             onPressed: () {
               if (_formKey.currentState.validate()) {
-                getLogin(_pseudoController.text);
-                VerifData(
-                    _pseudoController.text, _passwordController.text, data);
-                //Navigator.push(context, MaterialPageRoute(
-                //builder: (context){
-                //return LandingPage();
-                //}
-                //));
+                getLogin(_pseudoController.text, _passwordController.text);
               }
             },
             padding: EdgeInsets.all(15),
@@ -167,14 +144,18 @@ class _LoginState extends State<Login> {
               ),
             )));
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Form(
+    return Scaffold (
+   
+      
+          body:Form(
           key: _formKey,
-          child: ListView(
+          child: 
+          ListView(
+            
             shrinkWrap: true,
             padding: EdgeInsets.only(right: 24.0, left: 24.0),
             children: <Widget>[
+               
               SizedBox(height: 20.0),
               MainLogo(),
               SizedBox(height: 20.0),
@@ -192,6 +173,13 @@ class _LoginState extends State<Login> {
     );
   }
 }
+/*_save(String token) async {
+  .  final prefs = await SharedPreferences.getInstance();
+  .  final key = 'token';
+  .  final value = token;
+  .. prefs.setString(key, value);
+   }
+  */
 
 class MainLogo extends StatelessWidget {
   @override

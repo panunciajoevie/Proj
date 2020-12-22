@@ -1,15 +1,15 @@
 import 'package:flutter/foundation.dart';
-import 'package:petility/login.dart';
+import 'package:petility/register.dart';
 //import 'package:pet_rescue/uploadt.dart';
 import 'package:flutter/material.dart';
 
 class LandingPage extends StatelessWidget {
   static String tag = 'landingpage';
 
-  var idUser, fullname, username, completeaddress, contactno;
+  var id, fullname, username, completeaddress, contactno;
   LandingPage(
       {Key key,
-      this.idUser,
+      this.id,
       this.fullname,
       this.username,
       this.completeaddress,
@@ -59,6 +59,8 @@ class LandingPage extends StatelessWidget {
       )),
     );
   }
+
+  
 }
 
 class MainLogo extends StatelessWidget {

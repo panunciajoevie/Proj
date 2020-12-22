@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:petility/landingpage.dart';
 
 class Register extends StatefulWidget {
   static String tag = 'register';
@@ -45,7 +48,9 @@ class _RegisterState extends State<Register> {
             textAlign: TextAlign.center,
           ),
           onPressed: () {
-            Navigator.of(context).pop();
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return LandingPage();
+        }));
           },
         ),
       ],
@@ -58,15 +63,16 @@ class _RegisterState extends State<Register> {
   var _completeaddressController = new TextEditingController();
   var _contactnumberController = new TextEditingController();
   var _passwordController = new TextEditingController();
-  void _addData() {
-    var url = "https://petility.000webhostapp.com/NewUser.php";
-    //"http://192.168.137.1/petility/NewUser.php";
-
-    http.post(url, body: {
+  void _addData()  {
+    var url = //"https://petility.000webhostapp.com/NewUser.php";
+        "http://192.168.0.25:8000/api/auth/register";
+     http.post(url, headers: {
+      'Accept': 'application/json'
+    }, body: {
       "fullname": _fullnameController.text,
       "username": _usernameController.text,
       "completeaddress": _completeaddressController.text,
-      "contactno": _contactnumberController.text,
+      "contactnumber": _contactnumberController.text,
       "password": _passwordController.text,
     });
     onCreatedAccount();

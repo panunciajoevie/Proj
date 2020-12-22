@@ -8,16 +8,21 @@ class MyApp extends StatelessWidget {
   final routes = <String, WidgetBuilder>{
     Login.tag: (context) => Login(),
     Register.tag: (context) => Register(),
+    
   };
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Petility',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.lightBlue,
-        ),
-        home: Login());
+      title: 'Petility',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+
+        primarySwatch: Colors.lightBlue,
+      ),
+      home: Login(),
+      
+          
+    );
   }
 }
