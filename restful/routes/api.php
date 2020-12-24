@@ -18,17 +18,17 @@ Route::group([ 'prefix' => '/auth'],
 
 Route::post('/login', 'AuthController@login');
 
-Route::post('/register', 'AuthController@register');
+Route::post('/register', 'AuthController@register');}); 
 
-Route::group(['/middleware' => 'jwt.verify'], static function( $router){
+Route::group(['middleware' => 'jwt.verify'], function(){
 
 Route::post('/logout', 'AuthController@logout');
 
-Route::post('/refresh', 'AuthController@refresh');
+Route::get('/index', 'AuthController@index');
 
-Route::get('/detail', 'AuthController@detail'); });
+Route::post('/refresh', 'AuthController@refresh');});
 
-});
+
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

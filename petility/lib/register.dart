@@ -17,7 +17,7 @@ class _RegisterState extends State<Register> {
   static ThemeData _buildTheme() {
     final ThemeData base = ThemeData.light();
   }
-
+   bool _isLoading = false;
   void onCreatedAccount() {
     var alert = new AlertDialog(
       backgroundColor: Color(0xffF57F17),
@@ -49,7 +49,7 @@ class _RegisterState extends State<Register> {
           ),
           onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return LandingPage();
+          return UserProfile();
         }));
           },
         ),
@@ -177,7 +177,7 @@ class _RegisterState extends State<Register> {
             padding: EdgeInsets.all(15),
             color: Color(0xff1565c0),
             child: Text(
-              'Register',
+              _isLoading ? 'Login...' : 'Login',
               style: TextStyle(
                   fontSize: 20.0,
                   fontWeight: FontWeight.bold,

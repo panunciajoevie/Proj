@@ -19,6 +19,7 @@ class _LoginState extends State<Login> {
   var _passwordController = new TextEditingController();
   var data;
   var _isSecured = true;
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +27,9 @@ class _LoginState extends State<Login> {
       String pseudo,
       String password,
     ) async {
-      //    SharedPreferences sharedPreferences =
-      //       await SharedPreferences.getInstance();
+      setState(() {
+        _isLoading = true;
+      });
       var response = await http.post(Uri.encodeFull(
           //  "https://petility.000webhostapp.com/Login.php?PSEUDO=${pseudo}"),
           //laravel api
@@ -52,12 +54,17 @@ class _LoginState extends State<Login> {
         showDialog(context: context, child: alert);
       } else {
         print(data['user']);
-        print("Token: "+data['access_token']);
-        // _save(data['access_token']);
+        print("Token: " + data['access_token']);
+        SharedPreferences localStorage = await SharedPreferences.getInstance();
+        localStorage.setString('token', data['access_token']);
+        localStorage.setString('user', json.encode(data['user']));
         Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return LandingPage();
+          return UserProfile();
         }));
       }
+      setState(() {
+        _isLoading = false;
+      });
     }
 
     var pseudo = new ListTile(
@@ -114,7 +121,7 @@ class _LoginState extends State<Login> {
             padding: EdgeInsets.all(15),
             color: Color(0xff1565c0),
             child: Text(
-              'Login',
+              _isLoading ? 'logging-in' : 'Login',
               style: TextStyle(
                 fontSize: 20.0,
                 color: Colors.white,
@@ -144,18 +151,13 @@ class _LoginState extends State<Login> {
               ),
             )));
 
-    return Scaffold (
-   
-      
-          body:Form(
+    return Scaffold(
+      body: Form(
           key: _formKey,
-          child: 
-          ListView(
-            
+          child: ListView(
             shrinkWrap: true,
             padding: EdgeInsets.only(right: 24.0, left: 24.0),
             children: <Widget>[
-               
               SizedBox(height: 20.0),
               MainLogo(),
               SizedBox(height: 20.0),
