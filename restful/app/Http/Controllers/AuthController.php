@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
 use App\User;
 use Dotenv\Result\Success;
+use Illuminate\Auth\AuthenticationException;
 
 class AuthController extends Controller
 {
@@ -68,13 +69,11 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
+   
     public function logout()
     {
-        $this->guard()->logout();
-
-        return response()->json(['message' => 'Successfully logged out']);
+        return $this->respondWithToken($this->guard()->logout());
     }
-
     /**
      * Refresh a token.
      *

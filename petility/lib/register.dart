@@ -17,7 +17,8 @@ class _RegisterState extends State<Register> {
   static ThemeData _buildTheme() {
     final ThemeData base = ThemeData.light();
   }
-   bool _isLoading = false;
+
+  bool _isLoading = false;
   void onCreatedAccount() {
     var alert = new AlertDialog(
       backgroundColor: Color(0xffF57F17),
@@ -48,9 +49,14 @@ class _RegisterState extends State<Register> {
             textAlign: TextAlign.center,
           ),
           onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return UserProfile();
-        }));
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return LandingPage();
+                },
+              ),
+            );
           },
         ),
       ],
@@ -63,10 +69,10 @@ class _RegisterState extends State<Register> {
   var _completeaddressController = new TextEditingController();
   var _contactnumberController = new TextEditingController();
   var _passwordController = new TextEditingController();
-  void _addData()  {
+  void _addData() {
     var url = //"https://petility.000webhostapp.com/NewUser.php";
         "http://192.168.0.25:8000/api/auth/register";
-     http.post(url, headers: {
+    http.post(url, headers: {
       'Accept': 'application/json'
     }, body: {
       "fullname": _fullnameController.text,
@@ -177,7 +183,7 @@ class _RegisterState extends State<Register> {
             padding: EdgeInsets.all(15),
             color: Color(0xff1565c0),
             child: Text(
-              _isLoading ? 'Login...' : 'Login',
+              _isLoading ? 'Creating Account...' : 'Create Account',
               style: TextStyle(
                   fontSize: 20.0,
                   fontWeight: FontWeight.bold,

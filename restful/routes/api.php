@@ -20,7 +20,9 @@ Route::post('/login', 'AuthController@login');
 
 Route::post('/register', 'AuthController@register');}); 
 
-Route::group(['middleware' => 'jwt.verify'], function(){
+
+Route::group(['middleware' => 'api'], 
+ function(){
 
 Route::post('/logout', 'AuthController@logout');
 
