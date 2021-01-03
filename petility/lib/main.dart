@@ -1,12 +1,20 @@
+
+
 import 'package:petility/landingpage.dart';
 import 'package:petility/register.dart';
 import 'package:flutter/material.dart';
 import 'package:petility/login.dart';
 import 'package:petility/settings.dart';
 
+
 void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   final routes = <String, WidgetBuilder>{
     Login.tag: (context) => Login(),
     Register.tag: (context) => Register(),
@@ -14,7 +22,10 @@ class MyApp extends StatelessWidget {
     LandingPage.tag: (context) => LandingPage()
   };
 
+
   @override
+  
+
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Petility',

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:petility/landingpage.dart';
+import 'package:petility/login.dart';
 
 class Register extends StatefulWidget {
   static String tag = 'register';
@@ -53,7 +54,7 @@ class _RegisterState extends State<Register> {
               context,
               MaterialPageRoute(
                 builder: (context) {
-                  return LandingPage();
+                  return Login();
                 },
               ),
             );

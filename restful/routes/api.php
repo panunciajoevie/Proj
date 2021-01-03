@@ -18,13 +18,18 @@ Route::group([ 'prefix' => '/auth'],
 
 Route::post('/login', 'AuthController@login');
 
-Route::post('/register', 'AuthController@register');}); 
+Route::post('/register', 'AuthController@register');
+
+Route::put('/update/{id}', 'AuthController@update');
+Route::delete('/delete/{id}','AuthController@delete');
+}); 
+
 
 
 Route::group(['middleware' => 'api'], 
  function(){
 
-Route::post('/logout', 'AuthController@logout');
+Route::get('/logout', 'AuthController@logout');
 
 Route::get('/index', 'AuthController@index');
 

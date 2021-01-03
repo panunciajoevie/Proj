@@ -22,11 +22,12 @@ class _SettingsState extends State<Settings> {
   void initState() {
     _getUserInfo();
     super.initState();
-  
   }
 
   void _getUserInfo() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
+
+    localStorage.reload();
     var userJson = localStorage.getString('user');
     print(userJson);
     var user = json.decode(userJson);
@@ -37,16 +38,6 @@ class _SettingsState extends State<Settings> {
   }
 
   void logOut() async {
-    /* logout from the server ...
-  var res = await http.get(
-      Uri.encodeFull(  "http://192.168.0.25:8000/api/auth/logout"),
-      headers: {
-        'Content-type': 'application/json',
-        "Accept": "application/json"
-      });
-  var body = json.decode(res.body);
-  if (body['success']) {
- */
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     localStorage.remove('user');
     localStorage.remove('access_token');
@@ -59,8 +50,6 @@ class _SettingsState extends State<Settings> {
         },
       ),
     );
-
-    //}
   }
 
   Widget build(BuildContext context) {

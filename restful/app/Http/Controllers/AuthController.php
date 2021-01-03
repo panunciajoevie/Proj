@@ -1,14 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
 use App\User;
 use Dotenv\Result\Success;
-use Illuminate\Auth\AuthenticationException;
 
 class AuthController extends Controller
 {
@@ -19,7 +18,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login','register','index']]);
+        $this->middleware('auth:api', ['except' => ['login','register','index','logout','update','delete']]);
     }
 
     /**
@@ -70,10 +69,7 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
    
-    public function logout()
-    {
-        return $this->respondWithToken($this->guard()->logout());
-    }
+
     /**
      * Refresh a token.
      *
@@ -86,12 +82,72 @@ class AuthController extends Controller
 
     public function index()
     {
-        $record=user::all();
-     
+        
+       $record = user::all();
         return response()->json($record);
     }
+    public function logout(Request $request)
+    {
+        if(!user::checkToken($request)){
+            return response()->json([
+             'message' => 'Token is required',
+             'success' => false,
+            ],);
+        }
+       
+        try {
+            Auth::invalidate(Auth::parseToken($request->access_token));
+            return response()->json([
+                'success' => true,
+                'message' => 'User logged out successfully'
+            ]);
+        } catch (Auth $exception) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sorry, the user cannot be logged out'
+            ], 500);
+        }
+    }
+
+    public function update (Request $request, $id)
+    {
+        try{
+           
+            User::findOrFail($id)->update(
+                ['fullname'=>$request->fullname,
+                 'completeaddress'=>$request->completeaddress,
+                 'contactnumber'=>$request->contactnumber]);
+           // $record -> save();
 
 
+
+        /*
+            $record->fullname = $request->fullname;
+            $record->completeaddress=$request->completeaddress;
+            $record->contactnumber=$request->contactnumber;
+            $record -> $this.User::save();
+          */  
+          //  return response()->json(['status' => true, 'message'=>'Profile Updated']);
+            return response()->json(array(
+                'user' => User::findOrFail($id)));
+          
+       // return $this->respondWithToken($token);
+            
+        }catch(\Exception $e){
+            return response()->json(['status'=>'Fail']);
+        }
+    }
+    public function delete($id)
+    {
+        try{
+            $record = User::FindOrFail($id);
+            $record -> delete();
+            return response()->json(['status' => true, 'message'=>'Profile Deleted']);
+        }catch(\Exception $e){
+            return response()->json(['status'=>'Fail']);
+        }
+    }
+   
     /**
      * Get the token array structure.
      *
