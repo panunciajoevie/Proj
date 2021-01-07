@@ -6,19 +6,18 @@ import 'package:petility/login.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-class Profile extends StatefulWidget {
+class UpdatePet extends StatefulWidget {
   static String tag = 'profile';
 
   @override
-  _ProfileState createState() => _ProfileState();
+  _UpdatePetState createState() => _UpdatePetState();
 }
 
-class _ProfileState extends State<Profile> {
-  var _fullnameController = new TextEditingController();
-  var _contactnumberController = new TextEditingController();
-  var _completeaddressController = new TextEditingController();
+class _UpdatePetState extends State<UpdatePet> {
+  var _ageController = new TextEditingController();
+
   bool _isLoading = false;
-  bool _isLoadingdelete = false;
+
   var userData;
 
   @override
@@ -28,8 +27,7 @@ class _ProfileState extends State<Profile> {
     super.initState();
   }
 
-  getUpdate(
-      String fullname, String contactnumber, String completeaddress) async {
+  getUpdate(String age) async {
     try {
       setState(() {
         _isLoading = true;
@@ -39,12 +37,10 @@ class _ProfileState extends State<Profile> {
             //  "https://petility.000webhostapp.com/Login.php?PSEUDO=${pseudo}"),
             //laravel api
 
-            "http://192.168.0.25:8000/api/auth/update/${userData['id']}"),
+            "http://192.168.0.25:8000/api/mypets/update/${userData['id']}"),
         headers: {"Accept": "application/json"},
         body: {
-          "fullname": _fullnameController.text,
-          "contactnumber": _contactnumberController.text,
-          "completeaddress": _completeaddressController.text
+          "age": _ageController.text,
         },
       );
 
@@ -60,7 +56,7 @@ class _ProfileState extends State<Profile> {
         showDialog(context: context, child: alert);
       } else {
         SharedPreferences localStorage = await SharedPreferences.getInstance();
-        localStorage.setString('user', json.encode(data['user']));
+        localStorage.setString('mypets', json.encode(data['mypets']));
         localStorage.reload();
 
         Navigator.push(
@@ -99,68 +95,9 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  getDelete() async {
-    try {
-      setState(() {
-        _isLoadingdelete = true;
-      });
-      var response = await http.delete(
-        Uri.encodeFull(
-            //  "https://petility.000webhostapp.com/Login.php?PSEUDO=${pseudo}"),
-            //laravel api
-
-            "http://192.168.0.25:8000/api/auth/delete/${userData['id']}"),
-        headers: {"Accept": "application/json"},
-      );
-
-      var status = response.body.contains('Fail');
-      var data = json.decode(response.body);
-      print(data['user']);
-      print(data);
-      if (status) {
-        print('delete fail');
-        var alert = new AlertDialog(
-          title: new Text("Cant Delete Account"),
-        );
-        showDialog(context: context, child: alert);
-      } else {
-        print(data['user']);
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) {
-              return Login();
-            },
-          ),
-        );
-      }
-      setState(() {
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(
-        () {
-          _isLoading = false;
-        },
-      );
-      var alert = new AlertDialog(
-        title: new Text("Error!"),
-        content: new Text("Error Connecting to Host. Please try again."),
-      );
-      showDialog(context: context, child: alert);
-      return 'connection error';
-    }
-
-    setState(
-      () {
-        _isLoading = false;
-      },
-    );
-  }
-
   void _getUserInfo() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
-    var userJson = localStorage.getString('user');
+    var userJson = localStorage.getString('mypets');
     var user = json.decode(userJson);
 
     setState(() {
@@ -267,7 +204,7 @@ class _ProfileState extends State<Profile> {
             alignment: Alignment.topLeft,
             padding: const EdgeInsets.fromLTRB(20.0, 5.0, 0.0, 5.0),
             child: Text(
-              'User Name',
+              'Pet Name:',
               style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -279,7 +216,7 @@ class _ProfileState extends State<Profile> {
             alignment: Alignment.center,
             width: 500.0,
             child: Text(
-              userData != null ? '${userData['username']}' : '',
+              userData != null ? '${userData['name']}' : '',
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 50,
@@ -291,7 +228,7 @@ class _ProfileState extends State<Profile> {
             alignment: Alignment.topLeft,
             padding: const EdgeInsets.fromLTRB(20.0, 5.0, 0.0, 5.0),
             child: Text(
-              'FullName',
+              'Pet',
               style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -302,28 +239,20 @@ class _ProfileState extends State<Profile> {
             margin: const EdgeInsets.only(right: 10, left: 10),
             alignment: Alignment.center,
             width: 500.0,
-            child: TextField(
+            child: Text(
+              userData != null ? '${userData['pet']}' : '',
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 50,
                   fontWeight: FontWeight.bold,
                   fontFamily: 'Caveat'),
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: userData != null ? '${userData['fullname']}' : '',
-                hintStyle: TextStyle(
-                    fontSize: 50,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Caveat'),
-              ),
-              controller: _fullnameController,
             ),
           ),
           Container(
             alignment: Alignment.topLeft,
             padding: const EdgeInsets.fromLTRB(20.0, 5.0, 0.0, 5.0),
             child: Text(
-              'Contact Number',
+              'Breed',
               style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -334,22 +263,13 @@ class _ProfileState extends State<Profile> {
             margin: const EdgeInsets.only(right: 10, left: 10),
             alignment: Alignment.center,
             width: 500.0,
-            child: TextField(
+            child: Text(
+              userData != null ? '${userData['breed']}' : '',
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: 50,
                   fontWeight: FontWeight.bold,
                   fontFamily: 'Caveat'),
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText:
-                    userData != null ? '${userData['contactnumber']}' : '',
-                hintStyle: TextStyle(
-                    fontSize: 50,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Caveat'),
-              ),
-              controller: _contactnumberController,
             ),
           ),
           Container(
@@ -375,14 +295,13 @@ class _ProfileState extends State<Profile> {
                   fontFamily: 'Caveat'),
               decoration: InputDecoration(
                 border: InputBorder.none,
-                hintText:
-                    userData != null ? '${userData['completeaddress']}' : '',
+                hintText: userData != null ? '${userData['age']}' : '',
                 hintStyle: TextStyle(
                     fontSize: 50,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Caveat'),
               ),
-              controller: _completeaddressController,
+              controller: _ageController,
             ),
           ),
           Padding(
@@ -390,20 +309,6 @@ class _ProfileState extends State<Profile> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Container(
-                    alignment: Alignment.center,
-                    height: 50,
-                    padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
-                    child: RaisedButton(
-                      textColor: Colors.white,
-                      color: Colors.red[900],
-                      child: Text(
-                        _isLoadingdelete ? 'Deleting...' : 'Delete Account',
-                      ),
-                      onPressed: () {
-                        getDelete();
-                      },
-                    )),
                 Container(
                   alignment: Alignment.center,
                   height: 50,
@@ -416,11 +321,8 @@ class _ProfileState extends State<Profile> {
                     ),
                     onPressed: () {
                       print(
-                          "http://192.168.0.25:8000/api/auth/update/${userData['id']}");
-                      getUpdate(
-                          _fullnameController.text,
-                          _contactnumberController.text,
-                          _completeaddressController.text);
+                          "http://192.168.0.25:8000/api/mypets/update/${userData['id']}");
+                      getUpdate(_ageController.text);
                     },
                   ),
                 ),

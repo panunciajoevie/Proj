@@ -22,18 +22,21 @@ Route::post('/register', 'AuthController@register');
 
 Route::put('/update/{id}', 'AuthController@update');
 Route::delete('/delete/{id}','AuthController@delete');
+Route::get('/logout', 'AuthController@logout');
+Route::post('/refresh', 'AuthController@refresh');
 }); 
 
 
 
-Route::group(['middleware' => 'api'], 
+Route::group(['middleware' => 'api','prefix'=>'/mypets'], 
  function(){
 
-Route::get('/logout', 'AuthController@logout');
+Route::get('/index', 'MypetController@index');
+Route::post('/create', 'MypetController@create');
+Route::put('/update/{id}', 'MypetController@update');
+Route::delete('/delete/{id}','MypetController@delete');
 
-Route::get('/index', 'AuthController@index');
-
-Route::post('/refresh', 'AuthController@refresh');});
+});
 
 
 

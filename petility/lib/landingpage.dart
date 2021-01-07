@@ -3,6 +3,7 @@
 //import 'package:pet_rescue/uploadt.dart';
 
 import 'package:flutter/material.dart';
+import 'package:petility/mypet.dart';
 
 import 'package:petility/settings.dart';
 
@@ -72,6 +73,14 @@ class _LandingPageState extends State<LandingPage> {
                           child: InkWell(
                             onTap: () async {
                               await Future.delayed(Duration(milliseconds: 500));
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return MyPet();
+                                  },
+                                ),
+                              );
                             },
                             child: Container(
                               child: ClipRRect(
@@ -123,7 +132,7 @@ class _LandingPageState extends State<LandingPage> {
                         height: 40,
                         alignment: Alignment.center,
                         child: Text(
-                          'Settings',
+                          'Account',
                           style: TextStyle(
                               fontSize: 30,
                               fontWeight: FontWeight.bold,

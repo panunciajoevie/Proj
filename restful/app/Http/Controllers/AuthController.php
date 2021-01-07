@@ -113,26 +113,14 @@ class AuthController extends Controller
     {
         try{
            
-            User::findOrFail($id)->update(
-                ['fullname'=>$request->fullname,
-                 'completeaddress'=>$request->completeaddress,
-                 'contactnumber'=>$request->contactnumber]);
-           // $record -> save();
+            User::findOrFail($id)
+            ->update(['fullname'=>$request->fullname,
+                      'completeaddress'=>$request->completeaddress,
+                      'contactnumber'=>$request->contactnumber]);
 
-
-
-        /*
-            $record->fullname = $request->fullname;
-            $record->completeaddress=$request->completeaddress;
-            $record->contactnumber=$request->contactnumber;
-            $record -> $this.User::save();
-          */  
-          //  return response()->json(['status' => true, 'message'=>'Profile Updated']);
             return response()->json(array(
-                'user' => User::findOrFail($id)));
-          
-       // return $this->respondWithToken($token);
-            
+                    'user' => User::findOrFail($id)));
+         
         }catch(\Exception $e){
             return response()->json(['status'=>'Fail']);
         }
